@@ -26,11 +26,23 @@
             color: #333;
         }
 
-        #message {
+        #message-container {
+            display: flex;
+            align-items: center;
             font-size: 24px;
             color: #555;
             margin-bottom: 20px;
-            text-align: center;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #chat-icon {
+            margin-right: 10px;
+            font-size: 24px;
+            color: #007bff;
         }
 
         #reveal-button button {
@@ -50,26 +62,25 @@
     </style>
 </head>
 <body>
+   
     <div id="timer-container">
         <h1 id="timer">12:00:00</h1>
     </div>
-    <div id="message">Your message will appear here.</div>
-    <a id="reveal-button" href="http://example.com" style="display: none;">
+    <div id="message-container">
+        <span id="chat-icon">💬</span>
+        <span id="message">Your message will appear here.</span>
+    </div>
+    <a id="reveal-button" href="https://meet.google.com/gaf-txeg-myu" style="display: none;">
         <button>Revealed Button</button>
     </a>
     <script>
-        // Initialize the timer to 12 hours
-        let hours = 12;
-        let minutes = 0;
-        let seconds = 0;
-
         // Messages array
         const messages = [
-            "Message 1: Stay positive!",
-            "Message 2: Keep working hard!",
-            "Message 3: You can do it!",
-            "Message 4: Believe in yourself!",
-            "Message 5: Success is near!"
+            "Sugar agatledha ney bondam",
+            "em vundhi ley inka poduko",
+            "entra bsdk chusthunav timer off ayaka ra",
+            "pani pata ledha musukuni pani susko",
+            "enti radhika nuvu malla vachav ...."
         ];
 
         // Function to get a random message
@@ -78,52 +89,86 @@
             return messages[randomIndex];
         }
 
-        // Function to update the timer every second
-        function updateTimer() {
-            if (seconds === 0) {
-                if (minutes === 0) {
-                    if (hours === 0) {
-                        revealButton();
-                        return;
-                    } else {
-                        hours--;
-                        minutes = 59;
-                        seconds = 59;
-                    }
-                } else {
-                    minutes--;
-                    seconds = 59;
-                }
-            } else {
-                seconds--;
-            }
-
+        // Function to update the timer display
+        function updateTimerDisplay(hours, minutes, seconds) {
             document.getElementById("timer").innerText = `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
         }
 
-        // Format time to always show two digits
+        // Function to format time to always show two digits
         function formatTime(time) {
             return time < 10 ? `0${time}` : time;
         }
 
-        // Reveal the button when the timer reaches 0
+        // Function to reveal the button when the timer reaches 0
         function revealButton() {
             document.getElementById("reveal-button").style.display = "block";
         }
 
-        // Display a message every 30 minutes
+        // Function to display a message every 30 minutes
         function displayMessage() {
             document.getElementById("message").innerText = getRandomMessage();
         }
 
-        // Start the timer and message interval
-        setInterval(updateTimer, 1000);
-        setInterval(displayMessage, 30 * 60 * 1000); // 30 minutes in milliseconds
+        // Function to calculate the remaining time
+        function calculateRemainingTime(endTime) {
+            const now = new Date().getTime();
+            const distance = endTime - now;
+
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000)) / 1000);
+
+            return { hours, minutes, seconds, distance };
+        }
+
+        // Function to start the timer
+        function startTimer() {
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinutes = now.getMinutes();
+            const currentSeconds = now.getSeconds();
+            
+            // Calculate tomorrow's 12 PM in IST (Indian Standard Time)
+            const timerEndTime = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 12, 0, 0).getTime();
+
+            const timerInterval = setInterval(() => {
+                const { hours, minutes, seconds, distance } = calculateRemainingTime(timerEndTime);
+
+                if (distance < 0) {
+                    clearInterval(timerInterval);
+                    revealButton();
+                } else {
+                    updateTimerDisplay(hours, minutes, seconds);
+                }
+            }, 1000);
+        }
+
+        // Prevent inspect element
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.onkeydown = function(e) {
+            if (e.keyCode == 123) { // F12
+                return false;
+            }
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { // Ctrl+Shift+I
+                return false;
+            }
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) { // Ctrl+Shift+C
+                return false;
+            }
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { // Ctrl+Shift+J
+                return false;
+            }
+            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { // Ctrl+U
+                return false;
+            }
+        };
 
         // Initialize the display
-        document.getElementById("timer").innerText = `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
         displayMessage(); // Display the first message immediately
+        setInterval(displayMessage, 30 * 60 * 1000); // Display a new message every 30 minutes
 
+        // Start the timer
+        startTimer();
     </script>
 </body>
 </html>
