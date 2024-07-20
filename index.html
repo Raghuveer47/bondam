@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>12-Hour Timer with Messages</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+
+        #timer-container {
+            margin-bottom: 20px;
+        }
+
+        #timer {
+            font-size: 48px;
+            color: #333;
+        }
+
+        #message {
+            font-size: 24px;
+            color: #555;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        #reveal-button button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        #reveal-button button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="timer-container">
+        <h1 id="timer">12:00:00</h1>
+    </div>
+    <div id="message">Your message will appear here.</div>
+    <a id="reveal-button" href="http://example.com" style="display: none;">
+        <button>Revealed Button</button>
+    </a>
+    <script>
+        // Initialize the timer to 12 hours
+        let hours = 12;
+        let minutes = 0;
+        let seconds = 0;
+
+        // Messages array
+        const messages = [
+            "Message 1: Stay positive!",
+            "Message 2: Keep working hard!",
+            "Message 3: You can do it!",
+            "Message 4: Believe in yourself!",
+            "Message 5: Success is near!"
+        ];
+
+        // Function to get a random message
+        function getRandomMessage() {
+            const randomIndex = Math.floor(Math.random() * messages.length);
+            return messages[randomIndex];
+        }
+
+        // Function to update the timer every second
+        function updateTimer() {
+            if (seconds === 0) {
+                if (minutes === 0) {
+                    if (hours === 0) {
+                        revealButton();
+                        return;
+                    } else {
+                        hours--;
+                        minutes = 59;
+                        seconds = 59;
+                    }
+                } else {
+                    minutes--;
+                    seconds = 59;
+                }
+            } else {
+                seconds--;
+            }
+
+            document.getElementById("timer").innerText = `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
+        }
+
+        // Format time to always show two digits
+        function formatTime(time) {
+            return time < 10 ? `0${time}` : time;
+        }
+
+        // Reveal the button when the timer reaches 0
+        function revealButton() {
+            document.getElementById("reveal-button").style.display = "block";
+        }
+
+        // Display a message every 30 minutes
+        function displayMessage() {
+            document.getElementById("message").innerText = getRandomMessage();
+        }
+
+        // Start the timer and message interval
+        setInterval(updateTimer, 1000);
+        setInterval(displayMessage, 30 * 60 * 1000); // 30 minutes in milliseconds
+
+        // Initialize the display
+        document.getElementById("timer").innerText = `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
+        displayMessage(); // Display the first message immediately
+
+    </script>
+</body>
+</html>
